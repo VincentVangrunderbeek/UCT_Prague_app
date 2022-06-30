@@ -1,2 +1,2 @@
 # UCT_Prague_app
-Accelerated experiment application for UCT Prague
+The idea is to create an accelerated experiment application for UCT Prague so raw data can be uploaded and automatically processed to get in the desired shape. Additionally an interactive interface will be added so the user can costumize how the temperature and relative humidity evolve over the testing period. If standard ISO is selected than a preconfigured T, RH evolution will be used
