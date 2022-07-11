@@ -3,17 +3,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import math
 import numpy as np
+import process_data
 
+@st.cache
 def import_data(file):
-    df = pd.read_csv(file, delimiter=';', parse_dates=['Scan Time Stamp'], index_col='Scan Time Stamp')
-
+    df = pd.read_csv(file, delimiter=";", index_col='Scan Time Stamp')
+    df.index = pd.to_datetime(df.index)
+    print(df.index)
+    return df
 
 st.write("""
-# The Machine Learning App
+# The accelerated experiments application for UCT Prague
 
-In this implementation, A *LSTM deep learning network* from the Keras library is used to build a supervised machine learning regression model that is able to predict the ACM current from temperature and relative humidity input data. 
+In this application, the user can upload data from accelerated experiments and generate a corrosion profile over the testing time.
 
-Try adjusting the hyperparameters!
+Please carefully check the parameters in the left channel of the UI!!
 """)
 
 # ---------------------------------#
@@ -23,11 +27,16 @@ with st.sidebar.header('1. Upload your data'):
 
 # Sidebar - select the reference channel
 with st.sidebar.header('2. Select your reference channel'):
-    reference_channel = st.sidebar.selectbox('Select the reference channel used', [1, 2, 3])
+    if uploaded_file is not None:
+        df = import_data(uploaded_file)
+        columns = df.columns
+        reference_channel = st.sidebar.selectbox('Select the reference channel used', columns)
 
 # Sidebar - Select the other channels that need to be examined
 with st.sidebar.header('3. Select your reference channel'):
-    other_channels = st.sidebar.selectbox('Select the other channels to be examined', [1, 2, 3])
+    if uploaded_file is not None:
+        columns_1 = columns.drop(reference_channel)
+        other_channels = st.sidebar.multiselect('Select the other channels to be examined', columns_1)
 
 # Sidebar - Specify parameter settings
 with st.sidebar.header('3. Set Parameters'):
@@ -60,8 +69,15 @@ with st.sidebar.header('4. Temperature and relative humidity settings'):
 st.subheader('1. Dataset')
 
 if uploaded_file is not None:
-    df = import_data(uploaded_file)
     st.markdown('**1.1. Glimpse of dataset**')
-    st.write(df)
+    channel_columns = list(other_channels)
+    channel_columns.append(reference_channel)
+    data = df.loc[:, df.columns.intersection(channel_columns)]
+    data.rename({reference_channel: 'REF'}, axis=1, inplace=True)
+    data['minutes'] = np.round((data.index - data.index[0]).total_seconds() / 60)
+    st.write(data)
+    start_process = st.button('Start the data processing')
+    if start_process:
+        process_data.data_processing(data, thickness, width, other_channels)
 else:
     st.info('Awaiting for excel file to be uploaded.')
