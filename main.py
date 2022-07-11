@@ -75,6 +75,7 @@ if uploaded_file is not None:
     data = df.loc[:, df.columns.intersection(channel_columns)]
     data.rename({reference_channel: 'REF'}, axis=1, inplace=True)
     data['minutes'] = np.round((data.index - data.index[0]).total_seconds() / 60)
+    data['hours'] = data['minutes'] / 60
     st.write(data)
     start_process = st.button('Start the data processing')
     if start_process:

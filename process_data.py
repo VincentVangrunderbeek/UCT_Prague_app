@@ -5,6 +5,17 @@ plt.rcParams['lines.linewidth'] = 1.5
 import streamlit as st
 import pandas as pd
 
+def temperature_RH(df, T, RH, L_RH, H_RH, drying_time, times_immeresed, immersion_time, spraying_time, times_cycles):
+    days = [4, 3, 4, 3, 4, 3]
+    day = 0
+    while day < times_cycles:
+        total_hours = days[day] * 24
+
+        salt_app_time = (immersion_time + spraying_time) * times_immeresed
+        cycle_time = 96/drying_time
+
+        day = day + 1
+
 def data_processing(df, thickness, width, channels_columns_no_ref):
     fig, ax = plt.subplots(figsize=(12, 8))
     for column in channels_columns_no_ref:
@@ -24,8 +35,8 @@ def data_processing(df, thickness, width, channels_columns_no_ref):
 
         column_30MA = column_name + '30MA'
         df[column_30MA] = df[column_name].rolling(30, min_periods=1).mean()
-        ax.plot(df[column_name])
-        ax.plot(df[column_30MA], linewidth=2, label='Sample channel ' + column)
+        ax.plot(df['hours'], df[column_name])
+        ax.plot(df['hours'], df[column_30MA], linewidth=2, label='Sample channel ' + column)
 
         # for i in range(len(outlier_pairs)):
         #     df_x1 = df_outlier.loc[(df_outlier['Outlier'] == outlier_pairs[i][0])]
@@ -35,7 +46,7 @@ def data_processing(df, thickness, width, channels_columns_no_ref):
         ax.set_title('Thickness loss of a ' + str(thickness) + ' micron Fe substrate', fontsize=20)
         plt.xticks(fontsize=15)
         plt.yticks(fontsize=15)
-        ax.set_xlabel('Date', fontsize=20)
+        ax.set_xlabel('Hours', fontsize=20)
         ax.set_ylabel('Thickness loss (µm)', fontsize=20)
         ax.legend(fontsize=15)
 
