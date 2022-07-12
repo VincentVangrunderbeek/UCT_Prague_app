@@ -5,27 +5,28 @@ plt.rcParams['lines.linewidth'] = 1.5
 import streamlit as st
 import pandas as pd
 
-def temperature_RH(df, T, L_RH, H_RH, drying_time):
-    times = [96, 72, 96, 72]
-    df['RH'] = H_RH
-    time_passed = 0
-    for time in times:
-        # we devide by two because the measuring interval is 2 minutes with their accelerated experiments set-up
-        minutes = time * 60 / 2
-        df['RH'].iloc[time_passed + 0:time_passed + 180] = H_RH
-        df['RH'].iloc[time_passed + 300:time_passed + 360] = L_RH
-        minute = time_passed + 390
-        while minute < minutes:
-            for i in range(drying_time*30):
-                df['RH'].iloc[minute] = H_RH
-                minute = minute + 1
-
-            minute = minute + 60
-            for i in range(drying_time*30):
-                df['RH'].iloc[minute] = L_RH
-                minute = minute + 1
-
-        time_passed = time * 30
+# def temperature_RH(df, T, L_RH, H_RH, drying_time):
+#     times = [96, 72, 96, 72]
+#     df['RH'] = H_RH
+#     time_passed = 0
+#     for time in times:
+#         # we devide by two because the measuring interval is 2 minutes with their accelerated experiments set-up
+#         minutes = time * 60 / 2
+#                 df['RH'].iloc[minute] = H_RH
+#
+#
+#             minute = minute + 1
+#             df['RH'].iloc[time_passed + 0:time_passed + 180] = H_RH
+#             df['RH'].iloc[time_passed + 300:time_passed + 360] = L_RH
+#             minute = time_passed + 390
+#             while minute < minutes:
+#                 for i in range(drying_time * 30):
+#             minute = minute + 60
+#             for i in range(drying_time*30):
+#                 df['RH'].iloc[minute] = L_RH
+#                 minute = minute + 1
+#
+#         time_passed = time * 30
 
 def data_processing(df, thickness, width, channels_columns_no_ref):
     fig, ax = plt.subplots(figsize=(12, 8))
