@@ -70,7 +70,6 @@ st.subheader('1. Dataset')
 
 if uploaded_file is not None:
     st.markdown('**1.1. Glimpse of dataset**')
-    st.write(df)
     channel_columns = list(other_channels)
     channel_columns.append(reference_channel)
     data = df.loc[:, df.columns.intersection(channel_columns)]
